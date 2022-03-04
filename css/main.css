@@ -1,0 +1,53 @@
+:root {
+  --Turquoise: #4cbfa6;
+  --lilac: #f6ebf4;
+  --purple: #482673;
+  --orchid: #ed0b70;
+  --denim: #301008;
+}
+* {
+  padding: 0;
+  margin: 0;
+  outline: 0;
+  border: 0;
+  box-sizing: border-box;
+  line-height: 1.5em;
+}
+.main {
+  background: var(--lilac);
+}
+.main h1 {
+  margin-top: 1em;
+  text-align: center;
+}
+.episodes_article {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 1em;
+  justify-content: space-between;
+}
+
+.episode {
+  width: 45%;
+  height: 40vh;
+  padding: 0.3em;
+  overflow-y: scroll;
+  border: 2px solid red;
+  margin-top: 2em;
+  text-align: center;
+  border-radius: 20px;
+}
+.episode h3 {
+  font-size: 1rem;
+}
+.episode p {
+  font-size: 0.7rem;
+}
+.episode::-webkit-scrollbar {
+  display: none;
+}
+.episode img {
+  max-width: 100%;
+  border-radius: 20px;
+}

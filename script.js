@@ -8,9 +8,17 @@ function gettingData() {
     return alert("Error from the server!");
   }
 }
-
+//========================================Rendering the webPage===========
 const render = (allEpisodesShows) => {
-  //=======================================Header=====================
+  console.log(allEpisodesShows);
+  //=================================Creating episode title=======
+  const createTitle = (name, season, num) => {
+    return `S${String(season).padStart(2, 0)}E${String(num).padStart(
+      2,
+      0
+    )} - ${name}`;
+  };
+  //================================Header=====================
   const headerTag = document.createElement("header");
   headerTag.className = "header";
   rootTag.appendChild(headerTag);
@@ -21,6 +29,26 @@ const render = (allEpisodesShows) => {
   mainTag.innerHTML = `<h1>Found ${allEpisodesShows.length} Episode(s)</h1>`;
   rootTag.appendChild(mainTag);
 
+  //================================Episodes Article=============
+  const articleTag = document.createElement("article");
+  articleTag.className = "episodes_article";
+
+  allEpisodesShows.forEach((item) => {
+    const episode = document.createElement("div");
+    const heading = document.createElement("h3");
+    const image = document.createElement("img"); //<img>
+
+    const summary = document.createElement("p");
+
+    heading.innerText = createTitle(item.name, item.season, item.number);
+    summary.innerHTML = item.summary;
+    image.src = item.image.medium;
+    episode.className = "episode";
+    episode.append(image, heading, summary);
+
+    articleTag.appendChild(episode);
+  });
+  mainTag.appendChild(articleTag);
   //=========================================Footer===================
   const footerTag = document.createElement("footer");
   footerTag.className = "footer";
