@@ -33,10 +33,11 @@
   height: 40vh;
   padding: 0.3em;
   overflow-y: scroll;
-  border: 2px solid red;
+
   margin-top: 2em;
   text-align: center;
   border-radius: 20px;
+  box-shadow: 0 0 8px 0;
 }
 .episode h3 {
   font-size: 1rem;
