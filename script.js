@@ -1,5 +1,6 @@
 //You can edit ALL of the code here
 const rootTag = document.querySelector("#root");
+
 function gettingData() {
   const allEpisodes = getAllEpisodes();
   if (allEpisodes.length > 0) {
@@ -15,70 +16,71 @@ const createTitle = (name, season, num) => {
   )} - ${name}`;
 };
 
-function renderEpisode(allEpisodesShows, articleTag) {
-  articleTag.innerHTML = "";
-
-  allEpisodesShows.forEach((item) => {
-    const episode = document.createElement("div");
-    const heading = document.createElement("h3");
-    const image = document.createElement("img"); //<img>
-
-    const summary = document.createElement("p");
-
-    heading.innerText = createTitle(item.name, item.season, item.number);
-    summary.innerHTML = item.summary;
-    image.src = item.image.medium;
-    episode.className = "episode";
-    episode.append(image, heading, summary);
-
-    articleTag.appendChild(episode);
-  });
-}
-
 //========================================Rendering the webPage===========
 const render = (allEpisodesShows) => {
-  console.log(allEpisodesShows);
-
-  //================================Header=====================
+  //================================Header================================
   const headerTag = document.createElement("header");
+  const nav = document.createElement("nav");
+  nav.className = "nav";
   headerTag.className = "header";
+  headerTag.appendChild(nav);
   rootTag.appendChild(headerTag);
 
-  //========================================Main=====================
-  const mainTag = document.createElement("main");
-  mainTag.className = "main";
-  mainTag.innerHTML = `<h1>Found ${allEpisodesShows.length} Episode(s)</h1>`;
-  rootTag.appendChild(mainTag);
-
-  //============================searchBar=============================
+  //==================searchBar=================
 
   const searchBar = document.createElement("input");
+
+  searchBar.className = "nav_search";
+  searchBar.placeholder = "Search...";
   searchBar.type = "text";
-  mainTag.appendChild(searchBar);
-  console.log(searchBar);
+  nav.appendChild(searchBar);
 
   searchBar.addEventListener("keyup", (e) => {
     const searchString = e.target.value.toLowerCase();
-    console.log(searchString);
+
     const filteredEpisodes = allEpisodesShows.filter((episode) => {
       return episode.name.toLowerCase().includes(searchString);
-      //||
-      //season.name.toLowerCase().includes(searchString)
     });
-
-    //const filteredEpisode =
-    console.log(filteredEpisodes);
-    renderEpisode(filteredEpisodes, articleTag);
+    renderEpisode(filteredEpisodes);
   });
+  //========================================Main===========================
+  const mainTag = document.createElement("main");
+  mainTag.className = "main";
+  const headerCounter = document.createElement("h1");
+  headerCounter.className = "counter";
+  headerCounter.innerText = `Found ${allEpisodesShows.length}/${allEpisodesShows.length} Episode(s)`;
+  mainTag.appendChild(headerCounter);
+  rootTag.appendChild(mainTag);
 
-  //================================Episodes Article=============
+  //=============Episodes Article===========
 
   const articleTag = document.createElement("article");
   articleTag.className = "episodes_article";
   renderEpisode(allEpisodesShows, articleTag);
   mainTag.appendChild(articleTag);
+  //=============================Rendering episodes===============
+  function renderEpisode(filteredEpisodes) {
+    articleTag.innerHTML = "";
+    headerCounter.innerText = `Found ${filteredEpisodes.length}/${allEpisodesShows.length} Episode(s)`;
 
-  //=========================================Footer===================
+    filteredEpisodes.forEach((item) => {
+      const episode = document.createElement("div");
+      const heading = document.createElement("h3");
+      const image = document.createElement("img");
+
+      const summary = document.createElement("p");
+
+      heading.innerText = createTitle(item.name, item.season, item.number);
+      // <p></p>
+      summary.innerHTML = item.summary;
+      image.src = item.image.medium;
+      episode.className = "episode";
+      episode.append(image, heading, summary);
+
+      articleTag.appendChild(episode);
+    });
+  }
+  //=========================================Footer=======================
   const footerTag = document.createElement("footer");
   footerTag.className = "footer";
   rootTag.appendChild(footerTag);
