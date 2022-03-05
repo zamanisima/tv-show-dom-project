@@ -29,6 +29,24 @@ const render = (allEpisodesShows) => {
   mainTag.innerHTML = `<h1>Found ${allEpisodesShows.length} Episode(s)</h1>`;
   rootTag.appendChild(mainTag);
 
+  //============================searchBar=============================
+  let allEpisodeTitle = [];
+
+  const searchBar = document.createElement("input");
+  searchBar.type = "text";
+  mainTag.appendChild(searchBar);
+  console.log(searchBar);
+
+  searchBar.addEventListener("keyup", (e) => {
+    const searchString = e.target.value.toLowerCase();
+    console.log(searchString);
+    const filteredEpisodes = allEpisodeTitle.filter((episode) => {
+      episode.name.toLowerCase().includes(searchString) ||
+        season.name.toLowerCase().includes(searchString);
+    });
+    console.log(filteredEpisodes);
+  });
+
   //================================Episodes Article=============
   const articleTag = document.createElement("article");
   articleTag.className = "episodes_article";
