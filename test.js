@@ -46,7 +46,7 @@ const render = (allEpisodesShows) => {
 
   //=========================drop down search menu================
 
-  const selectMenu = document.createElement("select");
+  const selectMenu = document.createElement("select-input");
   nav.appendChild(selectMenu);
 
   //========================================Main===========================
