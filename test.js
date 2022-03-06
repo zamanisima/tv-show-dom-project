@@ -1,108 +1,110 @@
+/*Level 300 + 350: Alun T
+const searchBox = document.getElementById("search-box");
+const searchCount = document.getElementById("search-count");
+const selectMenu = document.getElementById("select-input");
+
+let currentEpisodes = [];
+
 //You can edit ALL of the code here
-const rootTag = document.querySelector("#root");
-
-function gettingData() {
-  const allEpisodes = getAllEpisodes();
-  if (allEpisodes.length > 0) {
-    return render(allEpisodes);
-  } else {
-    return alert("Error from the server!");
-  }
+function setup() {
+  sendRequest(82).then((data) => {
+    currentEpisodes = data;
+    makePageForEpisodes(currentEpisodes);
+    makeSelectMenuForEpisodes(currentEpisodes);
+  });
+  searchBox.addEventListener("keyup", onKeyUp);
+  selectMenu.addEventListener("change", onChange);
 }
-const createTitle = (name, season, num) => {
-  return `S${String(season).padStart(2, 0)}E${String(num).padStart(
-    2,
-    0
-  )} - ${name}`;
-};
 
-//========================================Rendering the webPage===========
-const render = (allEpisodesShows) => {
-  //================================Header================================
-  const headerTag = document.createElement("header");
-  const nav = document.createElement("nav");
-  nav.className = "nav";
-  headerTag.className = "header";
-  headerTag.appendChild(nav);
-  rootTag.appendChild(headerTag);
+function makeSelectMenuForEpisodes(episodeList) {
+  const showAll = document.createElement("option");
+  showAll.innerText = "Show all episodes";
+  showAll.value = "SHOW_ALL";
+  selectMenu.appendChild(showAll);
 
-  //==================searchBar=================
+  episodeList.forEach((episode) => {
+    const listOption = document.createElement("option");
+    const episodeString = `${formatSeriesAndEpisode(
+      episode.season,
+      episode.number
+    )} - ${episode.name}`;
+    listOption.innerText = episodeString;
+    listOption.value = episode.id;
+    selectMenu.appendChild(listOption);
+  });
+}
 
-  const searchBar = document.createElement("input");
+function formatSeriesAndEpisode(season, number) {
+  function padTheNumber(num) {
+    return num.toString().padStart(2, "0");
+  }
+  return `S${padTheNumber(season)}E${padTheNumber(number)}`;
+}
 
-  searchBar.className = "nav_search";
-  searchBar.placeholder = "Search...";
-  searchBar.type = "text";
-  nav.appendChild(searchBar);
+function makePageForEpisodes(episodeList) {
+  const episodeContainer = document.getElementById("episode-list");
+  episodeContainer.innerHTML = "";
 
-  searchBar.addEventListener("keyup", (e) => {
-    const searchString = e.target.value.toLowerCase();
+  episodeList.forEach((e) => {
+    const episode = document.createElement("div");
+    const heading = document.createElement("h3");
+    const summary = document.createElement("p");
 
-    const filteredEpisodes = allEpisodesShows.filter((episode) => {
-      return episode.name.toLowerCase().includes(searchString);
-    });
-    renderEpisode(filteredEpisodes);
+    heading.innerText = `${e.name} - ${formatSeriesAndEpisode(
+      e.season,
+      e.number
+    )}`;
+    summary.innerHTML = e.summary;
+
+    episode.className = "episode";
+
+    episode.appendChild(heading);
+    episode.appendChild(summary);
+    episodeContainer.appendChild(episode);
+  });
+}
+
+function onKeyUp(event) {
+  const searchTerm = event.target.value.toLowerCase();
+
+  const filteredEpisodes = currentEpisodes.filter((e) => {
+    const episodeName = e.name.toLowerCase();
+    const episodeSummary = e.summary.toLowerCase();
+    return (
+      episodeName.includes(searchTerm) || episodeSummary.includes(searchTerm)
+    );
   });
 
-  //=========================drop down search menu================
+  const filteredCount = filteredEpisodes.length;
+  const currentCount = currentEpisodes.length;
 
-  const selectMenu = document.createElement("select-input");
-  nav.appendChild(selectMenu);
+  const countString = `Displaying ${filteredCount} / ${currentCount}`;
 
-  //========================================Main===========================
-  const mainTag = document.createElement("main");
-  mainTag.className = "main";
-  const headerCounter = document.createElement("h1");
-  headerCounter.className = "counter";
-  headerCounter.innerText = `Found ${allEpisodesShows.length}/${allEpisodesShows.length} Episode(s)`;
-  mainTag.appendChild(headerCounter);
-  rootTag.appendChild(mainTag);
+  searchCount.innerText = countString;
+  makePageForEpisodes(filteredEpisodes);
+}
 
-  //=============Episodes Article===========
-
-  const articleTag = document.createElement("article");
-  articleTag.className = "episodes_article";
-  renderEpisode(allEpisodesShows, articleTag);
-  mainTag.appendChild(articleTag);
-  //=============================Rendering episodes===============
-  function renderEpisode(filteredEpisodes) {
-    articleTag.innerHTML = "";
-    headerCounter.innerText = `Found ${filteredEpisodes.length}/${allEpisodesShows.length} Episode(s)`;
-
-    filteredEpisodes.forEach((item) => {
-      const episode = document.createElement("div");
-      const heading = document.createElement("h3");
-      const image = document.createElement("img");
-
-      const summary = document.createElement("p");
-
-      heading.innerText = createTitle(item.name, item.season, item.number);
-      // <p></p>
-      summary.innerHTML = item.summary;
-      image.src = item.image.medium;
-      episode.className = "episode";
-      episode.append(image, heading, summary);
-      articleTag.appendChild(episode);
-
-      if (filteredEpisodes.length > 1) {
-        let newOption = new Option(
-          createTitle(item.name, item.season, item.number)
-        );
-        selectMenu.add(newOption, undefined);
-      }
+function onChange(event) {
+  const episodeId = event.target.value;
+  if (episodeId === "SHOW_ALL") {
+    makePageForEpisodes(currentEpisodes);
+  } else {
+    const filteredEpisodes = currentEpisodes.filter((e) => {
+      return e.id === Number(episodeId);
     });
+    makePageForEpisodes(filteredEpisodes);
   }
-  //=========================================Footer=======================
-  const footerTag = document.createElement("footer");
-  footerTag.className = "footer";
-  rootTag.appendChild(footerTag);
-};
-window.onload = gettingData;
+}
 
-// fetch("https://api.tvmaze.com/shows/82/episodes")
-// .then((response) =>{
-//   return response .json();
+function sendRequest(showId) {
+  const urlForTheRequest = `https://api.tvmaze.com/shows/${showId}/episodes`;
 
-// })
-// .then((data)=>console.log(data))
-//.catch((e)=> console.log(e));
+  return fetch(urlForTheRequest)
+    .then((res) => res.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((e) => console.log(e));
+}
+
+window.onload = setup;*/

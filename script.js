@@ -44,10 +44,30 @@ const render = (allEpisodesShows) => {
     renderEpisode(filteredEpisodes);
   });
 
-  //=========================drop down search menu================
+  //=====Creating Episodes select Tag================
 
   const selectMenu = document.createElement("select");
   nav.appendChild(selectMenu);
+  const createSelectEpisodesTag = (tvShow) => {
+    const defaultOptionTag = document.createElement("option");
+    defaultOptionTag.innerText = "Not Selected";
+    defaultOptionTag.value = "none";
+    selectMenu.appendChild(defaultOptionTag);
+    tvShow.forEach((item) => {
+      const newOptionTag = document.createElement("option");
+      newOptionTag.innerText = createTitle(item.name, item.season, item.number);
+      newOptionTag.value = item.name;
+
+      selectMenu.appendChild(newOptionTag);
+    });
+  };
+  createSelectEpisodesTag(allEpisodesShows);
+  selectMenu.addEventListener("change", () => {
+    const filteredArray = allEpisodesShows.filter((item) => {
+      return item.name === selectMenu.value;
+    });
+    renderEpisode(filteredArray);
+  });
 
   //========================================Main===========================
   const mainTag = document.createElement("main");
@@ -68,7 +88,6 @@ const render = (allEpisodesShows) => {
   function renderEpisode(filteredEpisodes) {
     articleTag.innerHTML = "";
     headerCounter.innerText = `Found ${filteredEpisodes.length}/${allEpisodesShows.length} Episode(s)`;
-
     filteredEpisodes.forEach((item) => {
       const episode = document.createElement("div");
       const heading = document.createElement("h3");
@@ -83,13 +102,6 @@ const render = (allEpisodesShows) => {
       episode.className = "episode";
       episode.append(image, heading, summary);
       articleTag.appendChild(episode);
-
-      if (filteredEpisodes.length > 1) {
-        let newOption = new Option(
-          createTitle(item.name, item.season, item.number)
-        );
-        selectMenu.add(newOption, undefined);
-      }
     });
   }
   //=========================================Footer=======================
