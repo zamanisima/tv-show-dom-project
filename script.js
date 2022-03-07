@@ -2,12 +2,9 @@
 const rootTag = document.querySelector("#root");
 
 function gettingData() {
-  const allEpisodes = getAllEpisodes();
-  if (allEpisodes.length > 0) {
-    return render(allEpisodes);
-  } else {
-    return alert("Error from the server!");
-  }
+  sendRequest(120).then((data) => {
+    render(data);
+  });
 }
 const createTitle = (name, season, num) => {
   return `S${String(season).padStart(2, 0)}E${String(num).padStart(
@@ -15,6 +12,19 @@ const createTitle = (name, season, num) => {
     0
   )} - ${name}`;
 };
+
+//======fetch req=====
+
+function sendRequest(showId) {
+  const urlForTheRequest = `https://api.tvmaze.com/shows/${showId}/episodes`;
+
+  return fetch(urlForTheRequest)
+    .then((res) => res.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((e) => console.log(e));
+}
 
 //========================================Rendering the webPage===========
 const render = (allEpisodesShows) => {
@@ -82,7 +92,7 @@ const render = (allEpisodesShows) => {
 
   const articleTag = document.createElement("article");
   articleTag.className = "episodes_article";
-  renderEpisode(allEpisodesShows, articleTag);
+  renderEpisode(allEpisodesShows);
   mainTag.appendChild(articleTag);
   //=============================Rendering episodes===============
   function renderEpisode(filteredEpisodes) {
@@ -98,7 +108,13 @@ const render = (allEpisodesShows) => {
       heading.innerText = createTitle(item.name, item.season, item.number);
       // <p></p>
       summary.innerHTML = item.summary;
-      image.src = item.image.medium;
+
+      if (item.image) {
+        image.src = item.image.medium;
+      } else {
+        image.src =
+          "https://us.123rf.com/450wm/ilterriorm/ilterriorm2003/ilterriorm200300018/144389843-old-tv-cartoon-on-white.jpg?ver=6";
+      }
       episode.className = "episode";
       episode.append(image, heading, summary);
       articleTag.appendChild(episode);
@@ -108,13 +124,7 @@ const render = (allEpisodesShows) => {
   const footerTag = document.createElement("footer");
   footerTag.className = "footer";
   rootTag.appendChild(footerTag);
+
+  //==============fetch350==============
 };
 window.onload = gettingData;
-
-// fetch("https://api.tvmaze.com/shows/82/episodes")
-// .then((response) =>{
-//   return response .json();
-
-// })
-// .then((data)=>console.log(data))
-//.catch((e)=> console.log(e));
