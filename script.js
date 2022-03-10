@@ -123,6 +123,7 @@ const render = (allEpisodesShows) => {
   //=========================================Footer=======================
   const footerTag = document.createElement("footer");
   footerTag.className = "footer";
+  footerTag.innerHTML = `<h1>GitHub: <a href='https://github.com/zamanisima'></a></h1><h1>Made by Sima Zamani | 2022</h1><h3>Data is coming from <a href='https://tvmaze.com'>TV Maze</a></h5>`;
   rootTag.appendChild(footerTag);
 
   //==============fetch350==============
