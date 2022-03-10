@@ -2,7 +2,7 @@
 const rootTag = document.querySelector("#root");
 
 function gettingData() {
-  sendRequest(120).then((data) => {
+  sendRequest(82).then((data) => {
     render(data);
   });
 }
@@ -49,7 +49,10 @@ const render = (allEpisodesShows) => {
     const searchString = e.target.value.toLowerCase();
 
     const filteredEpisodes = allEpisodesShows.filter((episode) => {
-      return episode.name.toLowerCase().includes(searchString);
+      return (
+        episode.name.toLowerCase().includes(searchString) ||
+        episode.summary.toLowerCase().includes(searchString)
+      );
     });
     renderEpisode(filteredEpisodes);
   });
