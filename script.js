@@ -1,17 +1,31 @@
 //You can edit ALL of the code here
 const rootTag = document.querySelector("#root");
+const showSelect = document.getElementById("select-show");
 
 function gettingData() {
+  const headerTag = document.createElement("header");
+  const nav = document.createElement("nav");
+  nav.setAttribute("id", "navOne");
+  nav.className = "nav";
+  headerTag.className = "header";
+  headerTag.appendChild(nav);
+  rootTag.appendChild(headerTag);
+
+  const selectMenu = document.createElement("select");
+  document.getElementById("navOne").appendChild(selectMenu);
+  const allShows = getAllShows();
+  makeSelectMenuForShows(allShows);
+
   sendRequest(82).then((data) => {
     render(data);
   });
 }
-const createTitle = (name, season, num) => {
+function createTitle(name, season, num) {
   return `S${String(season).padStart(2, 0)}E${String(num).padStart(
     2,
     0
   )} - ${name}`;
-};
+}
 
 //======fetch req=====
 
@@ -26,15 +40,51 @@ function sendRequest(showId) {
     .catch((e) => console.log(e));
 }
 
+//================select show Tag===============
+
+function makeSelectMenuForShows(shows) {
+  shows.sort((showA, showB) => {
+    const { name: nameA } = showA;
+    const { name: nameB } = showB;
+
+    if (nameA.toLowerCase() < nameB.toLowerCase()) {
+      return -1;
+    } else if (nameA.toLowerCase() > nameB.toLowerCase()) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
+  console.log(shows);
+  shows.forEach((show) => {
+    const newOptionTag = document.createElement("option");
+    newOptionTag.innerText = show.name;
+    newOptionTag.value = show.id;
+
+    showSelect.appendChild(newOptionTag);
+  });
+}
+
+const createSelectEpisodesTag = (tvShow) => {
+  const defaultOptionTag = document.createElement("option");
+  defaultOptionTag.innerText = "Not Selected";
+  defaultOptionTag.value = "none";
+  selectMenu.appendChild(defaultOptionTag);
+  tvShow.forEach((item) => {
+    const newOptionTag = document.createElement("option");
+    newOptionTag.innerText = createTitle(item.name, item.season, item.number);
+    newOptionTag.value = item.name;
+
+    selectMenu.appendChild(newOptionTag);
+  });
+};
+
+//const selectShow = document.createElement("select");
+//electShow.className = "select";
+
 //========================================Rendering the webPage===========
 const render = (allEpisodesShows) => {
   //================================Header================================
-  const headerTag = document.createElement("header");
-  const nav = document.createElement("nav");
-  nav.className = "nav";
-  headerTag.className = "header";
-  headerTag.appendChild(nav);
-  rootTag.appendChild(headerTag);
 
   //==================searchBar=================
 
@@ -43,7 +93,7 @@ const render = (allEpisodesShows) => {
   searchBar.className = "nav_search";
   searchBar.placeholder = "Search...";
   searchBar.type = "text";
-  nav.appendChild(searchBar);
+  document.getElementById("navOne").appendChild(searchBar);
 
   searchBar.addEventListener("keyup", (e) => {
     const searchString = e.target.value.toLowerCase();
@@ -60,7 +110,7 @@ const render = (allEpisodesShows) => {
   //=====Creating Episodes select Tag================
 
   const selectMenu = document.createElement("select");
-  nav.appendChild(selectMenu);
+  document.getElementById("navOne").appendChild(selectMenu);
   const createSelectEpisodesTag = (tvShow) => {
     const defaultOptionTag = document.createElement("option");
     defaultOptionTag.innerText = "Not Selected";
